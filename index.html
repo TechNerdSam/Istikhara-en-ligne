@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Istikhara en Ligne : Guidance & Réflexion</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@300;400;600&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #1a202c;
+            --bg-card: #2d3748;
+            --text-primary: #edf2f7;
+            --text-secondary: #a0aec0;
+            --accent-gold: #f6e05e;
+            --accent-teal: #38b2ac;
+        }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-dark);
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cg fill='%232d3748' fill-opacity='0.4'%3E%3Cpath d='M50 0h50v50H50zM0 50h50v50H0z'/%3E%3C/g%3E%3C/svg%3E");
+            color: var(--text-primary);
+        }
+        .font-amiri { font-family: 'Amiri', serif; }
+        .font-display { font-family: 'Playfair Display', serif; }
+
+        .card-flipper {
+            perspective: 1000px;
+        }
+        .card-inner {
+            position: relative;
+            width: 100%;
+            transition: transform 0.8s;
+            transform-style: preserve-3d;
+        }
+        .card-flipper.is-flipped .card-inner {
+            transform: rotateY(180deg);
+        }
+        .card-front, .card-back {
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            width: 100%;
+            border-radius: 1rem;
+            background-color: var(--bg-card);
+            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.3), 0 8px 10px -6px rgb(0 0 0 / 0.3);
+        }
+        .card-back {
+            transform: rotateY(180deg);
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+        #getResultBtn {
+            background: linear-gradient(45deg, var(--accent-teal), #2c7a7b);
+            box-shadow: 0 0 15px rgba(56, 178, 172, 0.4);
+            transition: all 0.3s ease;
+        }
+        #getResultBtn:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 0 25px rgba(56, 178, 172, 0.6);
+        }
+        .loader {
+            display: none; /* Caché par défaut */
+            border: 4px solid var(--text-secondary);
+            border-top: 4px solid var(--accent-gold);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="text-slate-200">
+
+    <!-- Conteneur Principal -->
+    <div class="container mx-auto max-w-xl p-4 min-h-screen flex flex-col justify-center items-center">
+
+        <main class="w-full">
+            <div id="card-flipper" class="card-flipper">
+                <div id="card-inner" class="card-inner" style="min-height: 500px;">
+                    
+                    <!-- FACE AVANT : ÉTAPES -->
+                    <div class="card-front p-6 sm:p-10 flex flex-col justify-between">
+                        <div>
+                            <header class="text-center mb-8">
+                                <h1 class="font-display text-4xl md:text-5xl font-bold text-white mb-2">Istikhara</h1>
+                                <p class="text-base text-slate-400">Guidance & Réflexion Coranique</p>
+                            </header>
+
+                            <div class="space-y-4 text-center">
+                                <div class="p-4 bg-gray-800/50 rounded-lg">
+                                    <p><span class="font-bold text-teal-400">1.</span> Concentrez-vous sur votre intention.</p>
+                                </div>
+                                <div class="p-4 bg-gray-800/50 rounded-lg">
+                                    <p><span class="font-bold text-teal-400">2.</span> Récitez 3x la prière sur le Prophète (ﷺ).</p>
+                                </div>
+                                <div class="p-4 bg-gray-800/50 rounded-lg">
+                                    <p><span class="font-bold text-teal-400">3.</span> Appuyez pour recevoir une guidance.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="text-center mt-8">
+                            <button id="getResultBtn" class="text-white font-bold py-4 px-10 rounded-full text-lg">
+                                Révéler ma guidance
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- FACE ARRIÈRE : RÉSULTAT -->
+                    <div class="card-back p-6 sm:p-10 flex flex-col justify-center items-center text-center">
+                        <div id="loader" class="loader mb-4"></div>
+                        <div id="result-content" class="hidden w-full">
+                            <h2 id="result-title" class="font-display text-4xl font-bold mb-6"></h2>
+                            <div class="bg-gray-800/50 p-6 rounded-lg border border-slate-600">
+                                <p class="font-amiri text-3xl rtl leading-loose mb-4 text-white" id="result-arabic"></p>
+                                <p class="text-slate-300 italic mb-4" id="result-french"></p>
+                                <p class="text-sm text-slate-500" id="result-verse-ref"></p>
+                            </div>
+                            <button id="resetBtn" class="mt-8 bg-slate-600 text-white font-bold py-2 px-6 rounded-full hover:bg-slate-700 transition duration-300">
+                                Recommencer
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+             <!-- AVERTISSEMENT -->
+            <div class="mt-6 text-center text-xs text-slate-500 max-w-md mx-auto p-4 bg-gray-800/50 rounded-lg">
+                <p><strong class="text-amber-400">Rappel :</strong> Cet outil est une aide à la <span class="font-semibold">réflexion</span>. La véritable Istikhara est une prière spécifique. Ne basez pas une décision cruciale uniquement sur ce résultat.</p>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const results = [
+            { title: "Très Bon", color: "text-green-400", verse: { ref: "Sourate Ash-Sharh, 94:5", arabic: "فَإِنَّ مَعَ الْعُسْرِ يُسْرًا", french: "À côté de la difficulté est, certes, une facilité." } },
+            { title: "Bon", color: "text-teal-400", verse: { ref: "Sourate Ibrahim, 14:7", arabic: "لَئِن شَكَرْتُمْ لَأَزِيدَنَّكُمْ", french: "Si vous êtes reconnaissants, J'augmenterai [Mes bienfaits] pour vous." } },
+            { title: "Moyen", color: "text-amber-400", verse: { ref: "Sourate Al-Baqarah, 2:216", arabic: "وَعَسَىٰ أَن تَكْرَهُوا شَيْئًا وَهُوَ خَيْرٌ لَّكُمْ", french: "Il se peut que vous ayez de l'aversion pour une chose alors qu'elle vous est un bien." } },
+            { title: "Patience", color: "text-red-400", verse: { ref: "Sourate Al-Baqarah, 2:153", arabic: "اسْتَعِينُوا بِالصَّبْرِ وَالصَّلَاةِ", french: "Cherchez secours dans la patience et la prière." } },
+            { title: "Confiance", color: "text-sky-400", verse: { ref: "Sourate At-Talaq, 65:3", arabic: "وَمَن يَتَوَكَّلْ عَلَى اللَّهِ فَهُوَ حَسْبُهُ", french: "Et quiconque place sa confiance en Allah, Il lui suffit." } }
+        ];
+
+        const cardFlipper = document.getElementById('card-flipper');
+        const getResultBtn = document.getElementById('getResultBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const loader = document.getElementById('loader');
+        const resultContent = document.getElementById('result-content');
+
+        const resultTitle = document.getElementById('result-title');
+        const resultArabic = document.getElementById('result-arabic');
+        const resultFrench = document.getElementById('result-french');
+        const resultVerseRef = document.getElementById('result-verse-ref');
+
+        getResultBtn.addEventListener('click', () => {
+            cardFlipper.classList.add('is-flipped');
+            
+            // Cacher le résultat précédent et afficher le loader
+            resultContent.classList.add('hidden');
+            loader.style.display = 'block';
+
+            setTimeout(() => {
+                const randomIndex = Math.floor(Math.random() * results.length);
+                const result = results[randomIndex];
+
+                resultTitle.textContent = result.title;
+                resultTitle.className = `font-display text-4xl font-bold mb-6 ${result.color}`;
+                resultArabic.textContent = result.verse.arabic;
+                resultFrench.textContent = `"${result.verse.french}"`;
+                resultVerseRef.textContent = `(${result.verse.ref})`;
+                
+                // Cacher le loader et afficher le nouveau résultat
+                loader.style.display = 'none';
+                resultContent.classList.remove('hidden');
+
+            }, 1500); // Simule un temps de "réflexion"
+        });
+
+        resetBtn.addEventListener('click', () => {
+            cardFlipper.classList.remove('is-flipped');
+        });
+    </script>
+
+</body>
+</html>
+
