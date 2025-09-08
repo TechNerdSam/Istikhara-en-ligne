@@ -117,7 +117,8 @@
                     <div class="card-back p-6 sm:p-10 flex flex-col justify-center items-center text-center">
                         <div id="loader" class="loader mb-4"></div>
                         <div id="result-content" class="hidden w-full">
-                            <h2 id="result-title" class="font-display text-4xl font-bold mb-6"></h2>
+                            <h2 id="result-title" class="font-display text-4xl font-bold mb-2"></h2>
+                            <p id="result-subtitle" class="text-xl text-slate-400 mb-6"></p>
                             <div class="bg-gray-800/50 p-6 rounded-lg border border-slate-600">
                                 <p class="font-amiri text-3xl rtl leading-loose mb-4 text-white" id="result-arabic"></p>
                                 <p class="text-slate-300 italic mb-4" id="result-french"></p>
@@ -135,15 +136,20 @@
                 <p><strong class="text-amber-400">Rappel :</strong> Cet outil est une aide à la <span class="font-semibold">réflexion</span>. La véritable Istikhara est une prière spécifique. Ne basez pas une décision cruciale uniquement sur ce résultat.</p>
             </div>
         </main>
+
+        <footer class="mt-8 text-center">
+            <p class="text-xs text-slate-500">Ce site web a été créé par Samyn-Antoy ABASSE.</p>
+        </footer>
+
     </div>
 
     <script>
         const results = [
-            { title: "Très Bon", color: "text-green-400", verse: { ref: "Sourate Ash-Sharh, 94:5", arabic: "فَإِنَّ مَعَ الْعُسْرِ يُسْرًا", french: "À côté de la difficulté est, certes, une facilité." } },
-            { title: "Bon", color: "text-teal-400", verse: { ref: "Sourate Ibrahim, 14:7", arabic: "لَئِن شَكَرْتُمْ لَأَزِيدَنَّكُمْ", french: "Si vous êtes reconnaissants, J'augmenterai [Mes bienfaits] pour vous." } },
-            { title: "Moyen", color: "text-amber-400", verse: { ref: "Sourate Al-Baqarah, 2:216", arabic: "وَعَسَىٰ أَن تَكْرَهُوا شَيْئًا وَهُوَ خَيْرٌ لَّكُمْ", french: "Il se peut que vous ayez de l'aversion pour une chose alors qu'elle vous est un bien." } },
-            { title: "Patience", color: "text-red-400", verse: { ref: "Sourate Al-Baqarah, 2:153", arabic: "اسْتَعِينُوا بِالصَّبْرِ وَالصَّلَاةِ", french: "Cherchez secours dans la patience et la prière." } },
-            { title: "Confiance", color: "text-sky-400", verse: { ref: "Sourate At-Talaq, 65:3", arabic: "وَمَن يَتَوَكَّلْ عَلَى اللَّهِ فَهُوَ حَسْبُهُ", french: "Et quiconque place sa confiance en Allah, Il lui suffit." } }
+            { title: "Positif", subtitle: "Très Favorable", color: "text-green-400", verse: { ref: "Sourate Ash-Sharh, 94:5", arabic: "فَإِنَّ مَعَ الْعُسْرِ يُسْرًا", french: "À côté de la difficulté est, certes, une facilité." } },
+            { title: "Positif", subtitle: "Favorable", color: "text-teal-400", verse: { ref: "Sourate Ibrahim, 14:7", arabic: "لَئِن شَكَرْتُمْ لَأَزِيدَنَّكُمْ", french: "Si vous êtes reconnaissants, J'augmenterai [Mes bienfaits] pour vous." } },
+            { title: "Neutre", subtitle: "Prudence est recommandée", color: "text-amber-400", verse: { ref: "Sourate Al-Baqarah, 2:216", arabic: "وَعَسَىٰ أَن تَكْرَهُوا شَيْئًا وَهُوَ خَيْرٌ لَّكُمْ", french: "Il se peut que vous ayez de l'aversion pour une chose alors qu'elle vous est un bien." } },
+            { title: "Négatif", subtitle: "Patience est conseillée", color: "text-red-400", verse: { ref: "Sourate Al-Baqarah, 2:153", arabic: "اسْتَعِينُوا بِالصَّبْرِ وَالصَّلَاةِ", french: "Cherchez secours dans la patience et la prière." } },
+            { title: "Positif", subtitle: "Ayez pleine confiance", color: "text-sky-400", verse: { ref: "Sourate At-Talaq, 65:3", arabic: "وَمَن يَتَوَكَّلْ عَلَى اللَّهِ فَهُوَ حَسْبُهُ", french: "Et quiconque place sa confiance en Allah, Il lui suffit." } }
         ];
 
         const cardFlipper = document.getElementById('card-flipper');
@@ -153,6 +159,7 @@
         const resultContent = document.getElementById('result-content');
 
         const resultTitle = document.getElementById('result-title');
+        const resultSubtitle = document.getElementById('result-subtitle');
         const resultArabic = document.getElementById('result-arabic');
         const resultFrench = document.getElementById('result-french');
         const resultVerseRef = document.getElementById('result-verse-ref');
@@ -169,7 +176,8 @@
                 const result = results[randomIndex];
 
                 resultTitle.textContent = result.title;
-                resultTitle.className = `font-display text-4xl font-bold mb-6 ${result.color}`;
+                resultTitle.className = `font-display text-4xl font-bold mb-2 ${result.color}`;
+                resultSubtitle.textContent = result.subtitle;
                 resultArabic.textContent = result.verse.arabic;
                 resultFrench.textContent = `"${result.verse.french}"`;
                 resultVerseRef.textContent = `(${result.verse.ref})`;
@@ -188,4 +196,5 @@
 
 </body>
 </html>
+
 
