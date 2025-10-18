@@ -1,13 +1,15 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Istikhara en Ligne : Guidance & Réflexion</title>
+    <title>Istikhara en Ligne : Guidance, Réflexion & Apprentissage</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@300;400;600&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+    <!-- 1. Ajout d'une icône pour une meilleure PWA/expérience mobile -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cpath fill='%2338b2ac' d='M50 0 L100 50 L50 100 L0 50 Z'/%3E%3C/svg%3E" />
     <style>
         :root {
             --bg-dark: #1a202c;
@@ -20,24 +22,21 @@
         body {
             font-family: 'Poppins', sans-serif;
             background-color: var(--bg-dark);
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cg fill='%232d3748' fill-opacity='0.4'%3E%3Cpath d='M50 0h50v50H50zM0 50h50v50H0z'/%3E%3C/g%3E%3C/svg%3E");
+            /* 2. Amélioration du fond avec un dégradé subtil */
+            background-image: radial-gradient(circle at top right, rgba(56, 178, 172, 0.1), transparent 40%), radial-gradient(circle at bottom left, rgba(246, 224, 94, 0.05), transparent 50%), url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cg fill='%232d3748' fill-opacity='0.4'%3E%3Cpath d='M50 0h50v50H50zM0 50h50v50H0z'/%3E%3C/g%3E%3C/svg%3E");
             color: var(--text-primary);
         }
         .font-amiri { font-family: 'Amiri', serif; }
         .font-display { font-family: 'Playfair Display', serif; }
 
-        .card-flipper {
-            perspective: 1000px;
-        }
+        .card-flipper { perspective: 1500px; }
         .card-inner {
             position: relative;
             width: 100%;
-            transition: transform 0.8s;
+            transition: transform 0.9s cubic-bezier(0.68, -0.55, 0.27, 1.55);
             transform-style: preserve-3d;
         }
-        .card-flipper.is-flipped .card-inner {
-            transform: rotateY(180deg);
-        }
+        .card-flipper.is-flipped .card-inner { transform: rotateY(180deg); }
         .card-front, .card-back {
             -webkit-backface-visibility: hidden;
             backface-visibility: hidden;
@@ -45,6 +44,7 @@
             border-radius: 1rem;
             background-color: var(--bg-card);
             box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.3), 0 8px 10px -6px rgb(0 0 0 / 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
         .card-back {
             transform: rotateY(180deg);
@@ -62,7 +62,7 @@
             box-shadow: 0 0 25px rgba(56, 178, 172, 0.6);
         }
         .loader {
-            display: none; /* Caché par défaut */
+            display: none;
             border: 4px solid var(--text-secondary);
             border-top: 4px solid var(--accent-gold);
             border-radius: 50%;
@@ -74,40 +74,100 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+        /* 3. Styles pour les modales (pop-ups) */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 100;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.7);
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        .modal-content {
+            background-color: var(--bg-card);
+            margin: 5% auto;
+            padding: 2.5rem;
+            border: 1px solid #888;
+            width: 90%;
+            max-width: 600px;
+            border-radius: 1rem;
+            position: relative;
+            animation: slideIn 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        .close-btn {
+            color: var(--text-secondary);
+            position: absolute;
+            top: 1rem;
+            right: 1.5rem;
+            font-size: 2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        .close-btn:hover { color: var(--text-primary); }
+        @keyframes fadeIn { from {opacity: 0;} to {opacity: 1;} }
+        @keyframes slideIn { from {transform: translateY(-50px); opacity: 0;} to {transform: translateY(0); opacity: 1;} }
+        /* 4. Amélioration des styles pour les boutons d'action */
+        .action-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 0.5rem 1rem;
+            border-radius: 999px;
+            transition: background-color 0.3s;
+            font-size: 0.875rem;
+        }
+        .action-btn:hover { background-color: rgba(255, 255, 255, 0.2); }
     </style>
 </head>
 <body class="text-slate-200">
 
     <!-- Conteneur Principal -->
     <div class="container mx-auto max-w-xl p-4 min-h-screen flex flex-col justify-center items-center">
+        
+        <!-- 5. Section d'information cliquable -->
+        <div class="text-center mb-6 space-x-4">
+            <button id="openDuaBtn" class="bg-gray-700 hover:bg-gray-600 transition duration-300 px-4 py-2 rounded-full text-sm">Invocation de l'Istikhara</button>
+            <button id="openHowToBtn" class="bg-gray-700 hover:bg-gray-600 transition duration-300 px-4 py-2 rounded-full text-sm">Comment faire la prière ?</button>
+        </div>
 
         <main class="w-full">
             <div id="card-flipper" class="card-flipper">
-                <div id="card-inner" class="card-inner" style="min-height: 500px;">
+                <div id="card-inner" class="card-inner" style="min-height: 550px;">
                     
-                    <!-- FACE AVANT : ÉTAPES -->
+                    <!-- FACE AVANT -->
                     <div class="card-front p-6 sm:p-10 flex flex-col justify-between">
                         <div>
-                            <header class="text-center mb-8">
+                            <header class="text-center mb-6">
                                 <h1 class="font-display text-4xl md:text-5xl font-bold text-white mb-2">Istikhara</h1>
                                 <p class="text-base text-slate-400">Guidance & Réflexion Coranique</p>
                             </header>
 
-                            <div class="space-y-4 text-center">
-                                <div class="p-4 bg-gray-800/50 rounded-lg">
-                                    <p><span class="font-bold text-teal-400">1.</span> Concentrez-vous sur votre intention.</p>
+                            <!-- 6. Fonctionnalité de journal d'intention -->
+                            <div class="mb-6">
+                                <label for="intention" class="block text-sm font-medium text-teal-400 mb-2">1. Quelle est votre intention ?</label>
+                                <textarea id="intention" rows="2" class="w-full bg-gray-800/80 rounded-lg p-3 text-white placeholder-gray-500 focus:ring-2 focus:ring-teal-500 focus:outline-none transition" placeholder="Ex: Lancer un projet, un mariage, un voyage..."></textarea>
+                            </div>
+
+                            <div class="space-y-3 text-left">
+                                <div class="p-3 bg-gray-800/50 rounded-lg flex items-center gap-3">
+                                    <span class="font-bold text-teal-400 text-lg">2.</span>
+                                    <p>Récitez 3x la prière sur le Prophète (ﷺ).</p>
                                 </div>
-                                <div class="p-4 bg-gray-800/50 rounded-lg">
-                                    <p><span class="font-bold text-teal-400">2.</span> Récitez 3x la prière sur le Prophète (ﷺ).</p>
-                                </div>
-                                <div class="p-4 bg-gray-800/50 rounded-lg">
-                                    <p><span class="font-bold text-teal-400">3.</span> Appuyez pour recevoir une guidance.</p>
+                                <div class="p-3 bg-gray-800/50 rounded-lg flex items-center gap-3">
+                                    <span class="font-bold text-teal-400 text-lg">3.</span>
+                                    <p>Appuyez pour recevoir une guidance.</p>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="text-center mt-8">
-                            <button id="getResultBtn" class="text-white font-bold py-4 px-10 rounded-full text-lg">
+                        <div class="text-center mt-6">
+                            <button id="getResultBtn" class="text-white font-bold py-4 px-10 rounded-full text-lg shadow-lg">
                                 Révéler ma guidance
                             </button>
                         </div>
@@ -115,86 +175,291 @@
 
                     <!-- FACE ARRIÈRE : RÉSULTAT -->
                     <div class="card-back p-6 sm:p-10 flex flex-col justify-center items-center text-center">
-                        <div id="loader" class="loader mb-4"></div>
+                        <div id="loader" class="loader"></div>
+                        <!-- 7. Message personnalisé pendant le chargement -->
+                        <p id="loader-text" class="text-slate-400 mt-2 hidden">Recherche d'une guidance...</p>
                         <div id="result-content" class="hidden w-full">
+                            <!-- 8. Affichage de la catégorie du verset -->
+                            <p id="result-category" class="mb-2 text-sm uppercase tracking-widest text-teal-400"></p>
                             <h2 id="result-title" class="font-display text-4xl font-bold mb-2"></h2>
                             <p id="result-subtitle" class="text-xl text-slate-400 mb-6"></p>
                             <div class="bg-gray-800/50 p-6 rounded-lg border border-slate-600">
                                 <p class="font-amiri text-3xl rtl leading-loose mb-4 text-white" id="result-arabic"></p>
                                 <p class="text-slate-300 italic mb-4" id="result-french"></p>
-                                <p class="text-sm text-slate-500" id="result-verse-ref"></p>
+                                <!-- 9. Ajout d'une brève explication (Tafsir simplifié) -->
+                                <p class="text-xs text-slate-400 border-t border-slate-700 pt-3 mt-3" id="result-tafsir"></p>
+                                <p class="text-sm text-slate-500 mt-4" id="result-verse-ref"></p>
                             </div>
-                            <button id="resetBtn" class="mt-8 bg-slate-600 text-white font-bold py-2 px-6 rounded-full hover:bg-slate-700 transition duration-300">
-                                Recommencer
-                            </button>
+
+                            <!-- 10. Boutons d'action : Partager, Audio, Recommencer -->
+                            <div class="flex justify-center items-center gap-4 mt-6">
+                                <button id="copyBtn" class="action-btn">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z"/><path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3zM-1 8a.5.5 0 0 1 .5-.5h15a.5.5 0 0 1 0 1H-.5A.5.5 0 0 1-1 8z"/></svg>
+                                    Copier
+                                </button>
+                                <button id="audioBtn" class="action-btn">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M11.536 14.01A8.473 8.473 0 0 0 14.026 8a8.473 8.473 0 0 0-2.49-6.01l-.708.707A7.476 7.476 0 0 1 13.025 8c0 2.071-.84 3.946-2.197 5.303l.708.707z"/><path d="M10.121 12.596A6.48 6.48 0 0 0 12.025 8a6.48 6.48 0 0 0-1.904-4.596l-.707.707A5.482 5.482 0 0 1 11.025 8a5.482 5.482 0 0 1-1.61 3.89l.706.706z"/><path d="M8.707 11.182A4.486 4.486 0 0 0 10.025 8a4.486 4.486 0 0 0-1.318-3.182L8 5.525A3.489 3.489 0 0 1 9.025 8 3.49 3.49 0 0 1 8 10.475l.707.707zM6.717 3.55A.5.5 0 0 1 7 4v8a.5.5 0 0 1-.812.39L3.825 10.5H1.5A.5.5 0 0 1 1 10V6a.5.5 0 0 1 .5-.5h2.325l2.363-1.89a.5.5 0 0 1 .529-.06z"/></svg>
+                                    Écouter
+                                </button>
+                                <button id="resetBtn" class="action-btn bg-teal-600 hover:bg-teal-500 text-white">
+                                    Recommencer
+                                </button>
+                            </div>
+                            <p id="copy-feedback" class="text-xs text-green-400 mt-2 h-4"></p>
                         </div>
                     </div>
                 </div>
             </div>
              <!-- AVERTISSEMENT -->
             <div class="mt-6 text-center text-xs text-slate-500 max-w-md mx-auto p-4 bg-gray-800/50 rounded-lg">
-                <p><strong class="text-amber-400">Rappel :</strong> Cet outil est une aide à la <span class="font-semibold">réflexion</span>. La véritable Istikhara est une prière spécifique. Ne basez pas une décision cruciale uniquement sur ce résultat.</p>
+                <p><strong class="text-amber-400">Rappel :</strong> Cet outil est une aide à la <span class="font-semibold">réflexion</span>. La véritable Istikhara est une prière spécifique incluant une invocation. Ne basez pas une décision cruciale uniquement sur ce résultat.</p>
             </div>
         </main>
 
+        <!-- 11. Historique de la session -->
+        <section id="history-section" class="w-full max-w-md mt-8 hidden">
+            <h3 class="text-center text-lg font-display text-slate-400 mb-4">Historique de la session</h3>
+            <div id="history-list" class="space-y-2"></div>
+        </section>
+
         <footer class="mt-8 text-center">
+             <!-- 12. Section "Pour en savoir plus" -->
+            <div class="text-xs text-slate-500 mb-2">
+                <p class="mb-1"><strong>Pour en savoir plus :</strong></p>
+                <a href="https://islamqa.info/fr/answers/11981/comment-accomplir-la-priere-de-la-consultation-salat-ul-istikhara" target="_blank" rel="noopener noreferrer" class="hover:text-teal-400">IslamQA</a> |
+                <a href="https://www.muslim.fr/priere-de-consultation-salat-istikhara/" target="_blank" rel="noopener noreferrer" class="hover:text-teal-400">Muslim.fr</a>
+            </div>
             <p class="text-xs text-slate-500">Ce site web a été créé par Samyn-Antoy ABASSE.</p>
         </footer>
 
     </div>
 
-    <script>
-        const results = [
-            { title: "Positif", subtitle: "Très Favorable", color: "text-green-400", verse: { ref: "Sourate Ash-Sharh, 94:5", arabic: "فَإِنَّ مَعَ الْعُسْرِ يُسْرًا", french: "À côté de la difficulté est, certes, une facilité." } },
-            { title: "Positif", subtitle: "Favorable", color: "text-teal-400", verse: { ref: "Sourate Ibrahim, 14:7", arabic: "لَئِن شَكَرْتُمْ لَأَزِيدَنَّكُمْ", french: "Si vous êtes reconnaissants, J'augmenterai [Mes bienfaits] pour vous." } },
-            { title: "Neutre", subtitle: "Prudence est recommandée", color: "text-amber-400", verse: { ref: "Sourate Al-Baqarah, 2:216", arabic: "وَعَسَىٰ أَن تَكْرَهُوا شَيْئًا وَهُوَ خَيْرٌ لَّكُمْ", french: "Il se peut que vous ayez de l'aversion pour une chose alors qu'elle vous est un bien." } },
-            { title: "Négatif", subtitle: "Patience est conseillée", color: "text-red-400", verse: { ref: "Sourate Al-Baqarah, 2:153", arabic: "اسْتَعِينُوا بِالصَّبْرِ وَالصَّلَاةِ", french: "Cherchez secours dans la patience et la prière." } },
-            { title: "Positif", subtitle: "Ayez pleine confiance", color: "text-sky-400", verse: { ref: "Sourate At-Talaq, 65:3", arabic: "وَمَن يَتَوَكَّلْ عَلَى اللَّهِ فَهُوَ حَسْبُهُ", french: "Et quiconque place sa confiance en Allah, Il lui suffit." } }
-        ];
+    <!-- 13. Modale pour l'invocation (Dua) -->
+    <div id="duaModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" id="closeDuaBtn">&times;</span>
+            <h2 class="text-3xl font-display text-white mb-6">Invocation de l'Istikhara</h2>
+            <div class="space-y-4 text-left">
+                <p class="font-amiri text-2xl leading-relaxed text-right">اللَّهُمَّ إِنِّي أَسْتَخِيرُكَ بِعِلْمِكَ، وَأَسْتَقْدِرُكَ بِقُدْرَتِكَ، وَأَسْأَلُكَ مِنْ فَضْلِكَ الْعَظِيمِ، فَإِنَّكَ تَقْدِرُ وَلاَ أَقْدِرُ، وَتَعْلَمُ وَلاَ أَعْلَمُ، وَأَنْتَ عَلاَّمُ الْغُيُوبِ، اللَّهُمَّ إِنْ كُنْتَ تَعْلَمُ أَنَّ هَذَا الأَمْرَ - وَيُسَمِّي حَاجَتَهُ - خَيْرٌ لِي فِي دِينِي وَمَعَاشِي وَعَاقِبَةِ أَمْرِي فَاقْدُرْهُ لِي وَيَسِّرْهُ لِي ثُمَّ بَارِكْ لِي فِيهِ، وَإِنْ كُنْتَ تَعْلَمُ أَنَّ هَذَا الأَمْرَ شَرٌّ لِي فِي دِينِي وَمَعَاشِي وَعَاقِبَةِ أَمْرِي فَاصْرِفْهُ عَنِّي وَاصْرِفْنِي عَنْهُ وَاقْدُرْ لِيَ الْخَيْرَ حَيْثُ كَانَ ثُمَّ أَرْضِنِي بِهِ.</p>
+                <!-- 14. Transcription phonétique de l'invocation -->
+                <div class="p-4 bg-gray-800 rounded-lg">
+                    <h4 class="font-bold text-teal-400 mb-2">Phonétique :</h4>
+                    <p class="text-sm text-slate-300 italic">"Allâhumma innî astakhîruka bi-cilmika, wa astaqdiruka bi-qudratika, wa as'aluka min fadlika-l-cazîm. Fa-innaka taqdiru wa lâ aqdiru, wa taclamu wa lâ aclamu, wa anta callâmu-l-ghuyûb. Allâhumma in kunta taclamu anna hâdhâ-l-amra [nommer l'affaire] khayrun lî fî dînî wa macâshî wa câqibati amrî, fa-qdurhu lî, wa yassirhu lî, thumma bârik lî fîhi. Wa in kunta taclamu anna hâdhâ-l-amra sharrun lî fî dînî wa macâshî wa câqibati amrî, fa-srifhu cannî, wa-srifnî canhu, wa-qdur liya-l-khayra haythu kâna, thumma ardinî bih."</p>
+                </div>
+                <div class="p-4 bg-gray-700 rounded-lg">
+                    <h4 class="font-bold text-teal-400 mb-2">Traduction :</h4>
+                    <p class="text-sm text-slate-300">"Ô Allah ! Je Te consulte de par Ta connaissance, je quémande de Ton pouvoir de par Ta puissance, et je Te demande de par Ta grâce immense. Car Tu es certes capable et je suis incapable, Tu sais et je ne sais pas, et Tu es le Grand Connaisseur de l'invisible. Ô Allah ! Si Tu sais que cette affaire [nommer l'affaire] est un bien pour moi dans ma religion, ma vie et ma destinée, alors décrète-la pour moi, facilite-la-moi puis bénis-la pour moi. Et si Tu sais que cette affaire est un mal pour moi dans ma religion, ma vie et ma destinée, alors écarte-la de moi et écarte-moi d'elle, et décrète pour moi le bien où qu'il se trouve, puis fais que j'en sois satisfait."</p>
+                </div>
+                <!-- 15. Bouton pour copier l'invocation -->
+                <button id="copyDuaBtn" class="mt-4 action-btn">Copier le texte</button>
+                <p id="copy-dua-feedback" class="text-xs text-green-400 mt-2 h-4"></p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 16. Modale pour le guide "Comment faire" -->
+    <div id="howToModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" id="closeHowToBtn">&times;</span>
+            <h2 class="text-3xl font-display text-white mb-6">Comment accomplir la prière de consultation ?</h2>
+            <div class="space-y-4 text-left text-slate-300">
+                <p>La prière de l'Istikhara est une pratique prophétique (Sunnah) recommandée avant de prendre une décision importante. Elle se déroule comme suit :</p>
+                <ol class="list-decimal list-inside space-y-2 pl-4">
+                    <li>Faire ses ablutions (Wudu) de manière complète.</li>
+                    <li>Avoir une intention sincère de demander conseil à Allah.</li>
+                    <li>Prier deux unités de prière (Rak'at) surérogatoires (non obligatoires).</li>
+                    <li>Dans la première Rak'ah, réciter la Fatiha puis la sourate "Al-Kafirun" (109).</li>
+                    <li>Dans la seconde Rak'ah, réciter la Fatiha puis la sourate "Al-Ikhlas" (112).</li>
+                    <li>Après avoir terminé la prière (après le salut final), lever les mains et réciter l'invocation de l'Istikhara (disponible sur ce site).</li>
+                    <li>Au moment de dire <span class="italic text-amber-300">"hâdhâ-l-amra"</span> ("cette affaire"), mentionnez mentalement ou à voix basse votre préoccupation.</li>
+                    <li>Après l'invocation, fiez-vous à Allah. La réponse peut se manifester par un sentiment d'aisance ou de difficulté vis-à-vis de la décision, un rêve, ou la facilitation des choses dans une direction.</li>
+                </ol>
+                 <p class="pt-4 border-t border-slate-700"><strong>Important :</strong> Il n'est pas nécessaire d'attendre un rêve. Le signe le plus courant est une inclinaison du cœur et une facilitation des événements. </p>
+            </div>
+        </div>
+    </div>
 
+
+    <script>
+        // --- ÉLÉMENTS DU DOM ---
         const cardFlipper = document.getElementById('card-flipper');
         const getResultBtn = document.getElementById('getResultBtn');
         const resetBtn = document.getElementById('resetBtn');
         const loader = document.getElementById('loader');
+        const loaderText = document.getElementById('loader-text');
         const resultContent = document.getElementById('result-content');
-
+        const resultCategory = document.getElementById('result-category');
         const resultTitle = document.getElementById('result-title');
         const resultSubtitle = document.getElementById('result-subtitle');
         const resultArabic = document.getElementById('result-arabic');
         const resultFrench = document.getElementById('result-french');
+        const resultTafsir = document.getElementById('result-tafsir');
         const resultVerseRef = document.getElementById('result-verse-ref');
+        const copyBtn = document.getElementById('copyBtn');
+        const copyFeedback = document.getElementById('copy-feedback');
+        const audioBtn = document.getElementById('audioBtn');
+        const copyDuaBtn = document.getElementById('copyDuaBtn');
+        const copyDuaFeedback = document.getElementById('copy-dua-feedback');
+
+        // Modales
+        const duaModal = document.getElementById('duaModal');
+        const howToModal = document.getElementById('howToModal');
+        const openDuaBtn = document.getElementById('openDuaBtn');
+        const openHowToBtn = document.getElementById('openHowToBtn');
+        const closeDuaBtn = document.getElementById('closeDuaBtn');
+        const closeHowToBtn = document.getElementById('closeHowToBtn');
+
+        // Historique
+        const historySection = document.getElementById('history-section');
+        const historyList = document.getElementById('history-list');
+        let sessionHistory = [];
+        let currentAudio = null; // Pour gérer l'audio
+
+        // --- 17. BASE DE DONNÉES DE VERSETS ÉTENDUE ET CATÉGORISÉE ---
+        const verses = {
+            "Confiance & Espoir": [
+                { title: "Positif", subtitle: "Ayez pleine confiance", color: "text-sky-400", verse: { ref: "At-Talaq, 65:3", arabic: "وَمَن يَتَوَكَّلْ عَلَى اللَّهِ فَهُوَ حَسْبُهُ", french: "Et quiconque place sa confiance en Allah, Il lui suffit.", tafsir: "Ce verset souligne l'importance de la confiance totale en Allah (Tawakkul). Celui qui s'en remet à Lui trouvera en Lui le meilleur des soutiens." } },
+                { title: "Positif", subtitle: "Ne désespérez pas", color: "text-green-400", verse: { ref: "Az-Zumar, 39:53", arabic: "لَا تَقْنَطُوا مِن رَّحْمَةِ اللَّهِ", french: "Ne désespérez pas de la miséricorde d’Allah.", tafsir: "Un appel puissant à l'optimisme et à l'espoir, rappelant que la miséricorde d'Allah est immense et accessible à tous ceux qui se repentent." } },
+                { title: "Positif", subtitle: "La victoire est proche", color: "text-teal-400", verse: { ref: "An-Nasr, 110:1", arabic: "إِذَا جَاءَ نَصْرُ اللَّهِ وَالْفَتْحُ", french: "Lorsque vient le secours d'Allah ainsi que la victoire.", tafsir: "Annonce d'un succès et d'une aide divine imminente. La patience et la persévérance seront récompensées par un triomphe clair." } }
+            ],
+            "Patience & Épreuve": [
+                { title: "Neutre", subtitle: "Patience est conseillée", color: "text-amber-400", verse: { ref: "Al-Baqarah, 2:153", arabic: "اسْتَعِينُوا بِالصَّبْرِ وَالصَّلَاةِ", french: "Cherchez secours dans la patience et la prière.", tafsir: "Face aux difficultés, ce verset recommande deux piliers essentiels pour le croyant : l'endurance face à l'épreuve et le réconfort dans la prière." } },
+                { title: "Positif", subtitle: "La facilité arrive", color: "text-green-400", verse: { ref: "Ash-Sharh, 94:6", arabic: "إِنَّ مَعَ الْعُسْرِ يُسْرًا", french: "Certes, à côté de la difficulté est, une facilité.", tafsir: "Une promesse divine que chaque difficulté est accompagnée d'une issue favorable. C'est une incitation à endurer, car la délivrance est proche." } },
+                { title: "Neutre", subtitle: "Une épreuve bénéfique", color: "text-yellow-400", verse: { ref: "Al-Baqarah, 2:216", arabic: "وَعَسَىٰ أَن تَكْرَهُوا شَيْئًا وَهُوَ خَيْرٌ لَّكُمْ", french: "Il se peut que vous ayez de l'aversion pour une chose alors qu'elle vous est un bien.", tafsir: "Rappelle que la sagesse divine dépasse la compréhension humaine. Une situation qui semble négative peut en réalité cacher un grand bien." } }
+            ],
+            "Action & Décision": [
+                { title: "Positif", subtitle: "Agissez avec détermination", color: "text-blue-400", verse: { ref: "Al-Anfal, 8:60", arabic: "وَأَعِدُّوا لَهُم مَّا اسْتَطَعْتُم مِّن قُوَّةٍ", french: "Et préparez [pour lutter] contre eux tout ce que vous pouvez comme force.", tafsir: "Un appel à l'action, à la préparation et à l'utilisation de tous les moyens disponibles pour atteindre un objectif juste." } },
+                { title: "Positif", subtitle: "Favorable, si reconnaissant", color: "text-teal-400", verse: { ref: "Ibrahim, 14:7", arabic: "لَئِن شَكَرْتُمْ لَأَزِيدَنَّكُمْ", french: "Si vous êtes reconnaissants, J'augmenterai [Mes bienfaits] pour vous.", tafsir: "La gratitude (Shukr) est la clé de l'abondance. Reconnaître les bienfaits d'Allah ouvre la porte à encore plus de faveurs." } },
+                { title: "Neutre", subtitle: "Consultez les autres", color: "text-purple-400", verse: { ref: "Ash-Shura, 42:38", arabic: "وَأَمْرُهُمْ شُورَىٰ بَيْنَهُمْ", french: "et leurs affaires se règlent par consultation entre eux.", tafsir: "Souligne l'importance de la consultation (Shura) avant de prendre des décisions importantes. L'avis collectif est une source de sagesse." } }
+            ],
+            "Mise en Garde & Prudence": [
+                { title: "Négatif", subtitle: "Soyez sur vos gardes", color: "text-red-400", verse: { ref: "Al-Imran, 3:118", arabic: "يَا أَيُّهَا الَّذِينَ آمَنُوا لَا تَتَخِذُوا بِطَانَةً مِّن دُونِكُمْ", french: "Ô les croyants, ne prenez pas de confidents en dehors de vous-mêmes.", tafsir: "Une mise en garde contre la confiance aveugle. Il est conseillé de faire preuve de prudence et de ne pas dévoiler ses secrets à n'importe qui." } },
+                { title: "Négatif", subtitle: "N'agissez pas avec ignorance", color: "text-orange-400", verse: { ref: "Al-Hujurat, 49:6", arabic: "فَتَبَيَّنُوا أَن تُصِيبُوا قَوْمًا بِجَهَالَةٍ", french: "vérifiez [l'information] de peur que par ignorance vous ne portiez atteinte à des gens.", tafsir: "Insiste sur la nécessité de vérifier les informations avant d'agir. La précipitation basée sur des rumeurs peut causer de grands torts." } },
+                { title: "Négatif", subtitle: "La précipitation est déconseillée", color: "text-red-500", verse: { ref: "Al-Isra, 17:11", arabic: "وَكَانَ الْإِنسَانُ عَجُولًا", french: "Et l'homme est très prompt à l'empressement.", tafsir: "Ce verset met en lumière la nature hâtive de l'homme, qui peut le pousser à prendre des décisions précipitées. La patience est une vertu à cultiver." } }
+            ]
+        };
+
+        // --- FONCTIONS ---
+
+        // Fonction pour choisir un verset aléatoire
+        const getRandomVerse = () => {
+            const categories = Object.keys(verses);
+            const randomCategory = categories[Math.floor(Math.random() * categories.length)];
+            const versesInCategory = verses[randomCategory];
+            const randomVerse = versesInCategory[Math.floor(Math.random() * versesInCategory.length)];
+            return { ...randomVerse, category: randomCategory };
+        };
+
+        // Fonction pour mettre à jour la carte avec le résultat
+        const displayResult = (result) => {
+            resultCategory.textContent = result.category;
+            resultTitle.textContent = result.title;
+            resultTitle.className = `font-display text-4xl font-bold mb-2 ${result.color}`;
+            resultSubtitle.textContent = result.subtitle;
+            resultArabic.textContent = result.verse.arabic;
+            resultFrench.textContent = `"${result.verse.french}"`;
+            resultTafsir.textContent = result.verse.tafsir;
+            resultVerseRef.textContent = `(Sourate ${result.verse.ref})`;
+            
+            // Stocker la référence pour les boutons copier/audio
+            copyBtn.dataset.text = `Istikhara - ${result.category} : "${result.verse.french}" (Sourate ${result.verse.ref})`;
+            
+            // Correction du bug : la mauvaise partie de la référence était sélectionnée pour l'audio.
+            const [surah, ayah] = result.verse.ref.split(', ')[1].split(':'); 
+            audioBtn.dataset.audioSrc = `https://everyayah.com/data/Alafasy_128kbps/${surah.padStart(3, '0')}${ayah.padStart(3, '0')}.mp3`;
+        };
+
+        // 18. Implémentation de la mise à jour de l'historique de session
+        const updateHistory = (result) => {
+            sessionHistory.unshift(result); // Ajoute au début
+            historySection.classList.remove('hidden');
+            historyList.innerHTML = ''; // Efface la liste
+            sessionHistory.forEach(item => {
+                const historyItem = document.createElement('div');
+                historyItem.className = 'bg-gray-800/50 p-2 rounded-lg text-sm flex justify-between items-center';
+                historyItem.innerHTML = `
+                    <div>
+                        <span class="font-bold ${item.color}">${item.title}</span>
+                        <span class="text-slate-400 text-xs"> - ${item.verse.ref}</span>
+                    </div>
+                    <span class="text-xs text-slate-500">${item.category}</span>
+                `;
+                historyList.appendChild(historyItem);
+            });
+        };
+
+        // --- GESTIONNAIRES D'ÉVÉNEMENTS ---
 
         getResultBtn.addEventListener('click', () => {
             cardFlipper.classList.add('is-flipped');
-            
-            // Cacher le résultat précédent et afficher le loader
             resultContent.classList.add('hidden');
             loader.style.display = 'block';
+            loaderText.classList.remove('hidden');
 
             setTimeout(() => {
-                const randomIndex = Math.floor(Math.random() * results.length);
-                const result = results[randomIndex];
-
-                resultTitle.textContent = result.title;
-                resultTitle.className = `font-display text-4xl font-bold mb-2 ${result.color}`;
-                resultSubtitle.textContent = result.subtitle;
-                resultArabic.textContent = result.verse.arabic;
-                resultFrench.textContent = `"${result.verse.french}"`;
-                resultVerseRef.textContent = `(${result.verse.ref})`;
+                const result = getRandomVerse();
+                displayResult(result);
+                updateHistory(result);
                 
-                // Cacher le loader et afficher le nouveau résultat
                 loader.style.display = 'none';
+                loaderText.classList.add('hidden');
                 resultContent.classList.remove('hidden');
-
-            }, 1500); // Simule un temps de "réflexion"
+            }, 1800); // Temps de "réflexion" légèrement augmenté
         });
 
         resetBtn.addEventListener('click', () => {
             cardFlipper.classList.remove('is-flipped');
+            if (currentAudio) {
+                currentAudio.pause();
+                currentAudio = null;
+                audioBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M11.536 14.01A8.473 8.473 0 0 0 14.026 8a8.473 8.473 0 0 0-2.49-6.01l-.708.707A7.476 7.476 0 0 1 13.025 8c0 2.071-.84 3.946-2.197 5.303l.708.707z"/><path d="M10.121 12.596A6.48 6.48 0 0 0 12.025 8a6.48 6.48 0 0 0-1.904-4.596l-.707.707A5.482 5.482 0 0 1 11.025 8a5.482 5.482 0 0 1-1.61 3.89l.706.706z"/><path d="M8.707 11.182A4.486 4.486 0 0 0 10.025 8a4.486 4.486 0 0 0-1.318-3.182L8 5.525A3.489 3.489 0 0 1 9.025 8 3.49 3.49 0 0 1 8 10.475l.707.707zM6.717 3.55A.5.5 0 0 1 7 4v8a.5.5 0 0 1-.812.39L3.825 10.5H1.5A.5.5 0 0 1 1 10V6a.5.5 0 0 1 .5-.5h2.325l2.363-1.89a.5.5 0 0 1 .529-.06z"/></svg> Écouter';
+            }
         });
+
+        // 19. Fonctionnalité de copie et audio améliorée
+        copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(copyBtn.dataset.text).then(() => {
+                copyFeedback.textContent = 'Copié dans le presse-papiers !';
+                setTimeout(() => copyFeedback.textContent = '', 2000);
+            });
+        });
+
+        audioBtn.addEventListener('click', () => {
+            const audioSrc = audioBtn.dataset.audioSrc;
+            if (currentAudio && !currentAudio.paused) {
+                currentAudio.pause();
+                currentAudio = null;
+                audioBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M11.536 14.01A8.473 8.473 0 0 0 14.026 8a8.473 8.473 0 0 0-2.49-6.01l-.708.707A7.476 7.476 0 0 1 13.025 8c0 2.071-.84 3.946-2.197 5.303l.708.707z"/><path d="M10.121 12.596A6.48 6.48 0 0 0 12.025 8a6.48 6.48 0 0 0-1.904-4.596l-.707.707A5.482 5.482 0 0 1 11.025 8a5.482 5.482 0 0 1-1.61 3.89l.706.706z"/><path d="M8.707 11.182A4.486 4.486 0 0 0 10.025 8a4.486 4.486 0 0 0-1.318-3.182L8 5.525A3.489 3.489 0 0 1 9.025 8 3.49 3.49 0 0 1 8 10.475l.707.707zM6.717 3.55A.5.5 0 0 1 7 4v8a.5.5 0 0 1-.812.39L3.825 10.5H1.5A.5.5 0 0 1 1 10V6a.5.5 0 0 1 .5-.5h2.325l2.363-1.89a.5.5 0 0 1 .529-.06z"/></svg> Écouter';
+            } else {
+                currentAudio = new Audio(audioSrc);
+                currentAudio.play();
+                audioBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M5.5 3.5A1.5 1.5 0 0 1 7 5v6a1.5 1.5 0 0 1-3 0V5a1.5 1.5 0 0 1 1.5-1.5zm5 0A1.5 1.5 0 0 1 12 5v6a1.5 1.5 0 0 1-3 0V5a1.5 1.5 0 0 1 1.5-1.5z"/></svg> Pause';
+                currentAudio.onended = () => {
+                    audioBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M11.536 14.01A8.473 8.473 0 0 0 14.026 8a8.473 8.473 0 0 0-2.49-6.01l-.708.707A7.476 7.476 0 0 1 13.025 8c0 2.071-.84 3.946-2.197 5.303l.708.707z"/><path d="M10.121 12.596A6.48 6.48 0 0 0 12.025 8a6.48 6.48 0 0 0-1.904-4.596l-.707.707A5.482 5.482 0 0 1 11.025 8a5.482 5.482 0 0 1-1.61 3.89l.706.706z"/><path d="M8.707 11.182A4.486 4.486 0 0 0 10.025 8a4.486 4.486 0 0 0-1.318-3.182L8 5.525A3.489 3.489 0 0 1 9.025 8 3.49 3.49 0 0 1 8 10.475l.707.707zM6.717 3.55A.5.5 0 0 1 7 4v8a.5.5 0 0 1-.812.39L3.825 10.5H1.5A.5.5 0 0 1 1 10V6a.5.5 0 0 1 .5-.5h2.325l2.363-1.89a.5.5 0 0 1 .529-.06z"/></svg> Écouter';
+                };
+            }
+        });
+
+        // Logique pour les modales
+        openDuaBtn.onclick = () => duaModal.style.display = "block";
+        openHowToBtn.onclick = () => howToModal.style.display = "block";
+        closeDuaBtn.onclick = () => duaModal.style.display = "none";
+        closeHowToBtn.onclick = () => howToModal.style.display = "none";
+        window.onclick = (event) => {
+            if (event.target == duaModal) duaModal.style.display = "none";
+            if (event.target == howToModal) howToModal.style.display = "none";
+        };
+
+        copyDuaBtn.addEventListener('click', () => {
+            const duaText = duaModal.querySelector('.space-y-4').innerText;
+            navigator.clipboard.writeText(duaText).then(() => {
+                copyDuaFeedback.textContent = 'Invocation copiée !';
+                setTimeout(() => copyDuaFeedback.textContent = '', 2000);
+            });
+        });
+
     </script>
 
 </body>
 </html>
-
 
