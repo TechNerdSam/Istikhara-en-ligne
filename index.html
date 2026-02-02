@@ -3,463 +3,377 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Istikhara en Ligne : Guidance, Réflexion & Apprentissage</title>
+    <title>Istikhara-Link | Spatial Guidance 2026</title>
+    <!-- Favicon Design 2026 : Géométrie Néo-Minimaliste -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect x='25' y='25' width='50' height='50' rx='12' fill='%23050505' stroke='%2300F2EA' stroke-width='6' transform='rotate(45 50 50)'/%3E%3Ccircle cx='50' cy='50' r='8' fill='%2300F2EA'/%3E%3C/svg%3E" />
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@300;400;600&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
-    <!-- 1. Ajout d'une icône pour une meilleure PWA/expérience mobile -->
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cpath fill='%2338b2ac' d='M50 0 L100 50 L50 100 L0 50 Z'/%3E%3C/svg%3E" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Amiri:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+    
     <style>
         :root {
-            --bg-dark: #1a202c;
-            --bg-card: #2d3748;
-            --text-primary: #edf2f7;
-            --text-secondary: #a0aec0;
-            --accent-gold: #f6e05e;
-            --accent-teal: #38b2ac;
+            --obsidian: #050505;
+            --teal-bright: #00F2EA;
+            --glass: rgba(255, 255, 255, 0.03);
+            --border: rgba(255, 255, 255, 0.08);
+            --positive: #4ade80;
+            --negative: #f87171;
+            --neutral: #fbbf24;
         }
-        body {
-            font-family: 'Poppins', sans-serif;
-            background-color: var(--bg-dark);
-            /* 2. Amélioration du fond avec un dégradé subtil */
-            background-image: radial-gradient(circle at top right, rgba(56, 178, 172, 0.1), transparent 40%), radial-gradient(circle at bottom left, rgba(246, 224, 94, 0.05), transparent 50%), url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cg fill='%232d3748' fill-opacity='0.4'%3E%3Cpath d='M50 0h50v50H50zM0 50h50v50H0z'/%3E%3C/g%3E%3C/svg%3E");
-            color: var(--text-primary);
-        }
-        .font-amiri { font-family: 'Amiri', serif; }
-        .font-display { font-family: 'Playfair Display', serif; }
 
-        .card-flipper { perspective: 1500px; }
-        .card-inner {
-            position: relative;
-            width: 100%;
-            transition: transform 0.9s cubic-bezier(0.68, -0.55, 0.27, 1.55);
-            transform-style: preserve-3d;
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--obsidian);
+            color: white;
+            overflow-x: hidden;
+            min-height: 100vh;
         }
-        .card-flipper.is-flipped .card-inner { transform: rotateY(180deg); }
-        .card-front, .card-back {
-            -webkit-backface-visibility: hidden;
-            backface-visibility: hidden;
-            width: 100%;
-            border-radius: 1rem;
-            background-color: var(--bg-card);
-            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.3), 0 8px 10px -6px rgb(0 0 0 / 0.3);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        .card-back {
-            transform: rotateY(180deg);
-            position: absolute;
-            top: 0;
-            left: 0;
-        }
-        #getResultBtn {
-            background: linear-gradient(45deg, var(--accent-teal), #2c7a7b);
-            box-shadow: 0 0 15px rgba(56, 178, 172, 0.4);
-            transition: all 0.3s ease;
-        }
-        #getResultBtn:hover {
-            transform: translateY(-3px) scale(1.05);
-            box-shadow: 0 0 25px rgba(56, 178, 172, 0.6);
-        }
-        .loader {
-            display: none;
-            border: 4px solid var(--text-secondary);
-            border-top: 4px solid var(--accent-gold);
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            animation: spin 1s linear infinite;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        /* 3. Styles pour les modales (pop-ups) */
-        .modal {
-            display: none;
+
+        .font-display { font-family: 'Playfair Display', serif; }
+        .font-amiri { font-family: 'Amiri', serif; }
+
+        /* Arrière-plan Mesh Animé */
+        .mesh-bg {
             position: fixed;
-            z-index: 100;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0,0,0,0.7);
-            animation: fadeIn 0.3s ease-in-out;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: -1;
+            background: 
+                radial-gradient(circle at 10% 10%, rgba(0, 242, 234, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 90% 90%, rgba(139, 92, 246, 0.08) 0%, transparent 50%);
+            filter: blur(80px);
         }
-        .modal-content {
-            background-color: var(--bg-card);
-            margin: 5% auto;
-            padding: 2.5rem;
-            border: 1px solid #888;
-            width: 90%;
-            max-width: 600px;
-            border-radius: 1rem;
-            position: relative;
-            animation: slideIn 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+
+        /* Classes Glassmorphism */
+        .bento-card {
+            background: var(--glass);
+            backdrop-filter: blur(16px) saturate(180%);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
         }
-        .close-btn {
-            color: var(--text-secondary);
-            position: absolute;
-            top: 1rem;
-            right: 1.5rem;
-            font-size: 2rem;
-            font-weight: bold;
-            cursor: pointer;
-            transition: color 0.2s;
+
+        @media (min-width: 768px) {
+            .bento-card { border-radius: 32px; }
+            .bento-card:hover {
+                border-color: rgba(0, 242, 234, 0.4);
+                transform: translateY(-4px);
+                box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+            }
         }
-        .close-btn:hover { color: var(--text-primary); }
-        @keyframes fadeIn { from {opacity: 0;} to {opacity: 1;} }
-        @keyframes slideIn { from {transform: translateY(-50px); opacity: 0;} to {transform: translateY(0); opacity: 1;} }
-        /* 4. Amélioration des styles pour les boutons d'action */
-        .action-btn {
+
+        /* Badges de Sentiment */
+        .badge {
+            padding: 4px 12px;
+            border-radius: 99px;
+            font-size: 0.65rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
             display: inline-flex;
             align-items: center;
-            gap: 0.5rem;
-            background-color: rgba(255, 255, 255, 0.1);
-            padding: 0.5rem 1rem;
-            border-radius: 999px;
-            transition: background-color 0.3s;
-            font-size: 0.875rem;
+            gap: 6px;
         }
-        .action-btn:hover { background-color: rgba(255, 255, 255, 0.2); }
+        .badge-positive { background: rgba(74, 222, 128, 0.1); color: var(--positive); border: 1px solid rgba(74, 222, 128, 0.2); }
+        .badge-negative { background: rgba(248, 113, 113, 0.1); color: var(--negative); border: 1px solid rgba(248, 113, 113, 0.2); }
+        .badge-neutral { background: rgba(251, 191, 36, 0.1); color: var(--neutral); border: 1px solid rgba(251, 191, 36, 0.2); }
+
+        /* Bouton Lumineux */
+        .btn-glow {
+            position: relative;
+            background: white;
+            color: black;
+            border-radius: 99px;
+            overflow: hidden;
+            transition: all 0.4s;
+            cursor: pointer;
+        }
+
+        .btn-glow:active { transform: scale(0.95); }
+
+        /* Animations */
+        .reveal-anim {
+            animation: reveal 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        @keyframes reveal {
+            from { opacity: 0; transform: translateY(15px); filter: blur(10px); }
+            to { opacity: 1; transform: translateY(0); filter: blur(0); }
+        }
+
+        .modal-overlay {
+            backdrop-filter: blur(20px);
+            background: rgba(0, 0, 0, 0.85);
+            transition: opacity 0.3s ease;
+        }
     </style>
 </head>
-<body class="text-slate-200">
+<body class="selection:bg-teal-500/30">
 
-    <!-- Conteneur Principal -->
-    <div class="container mx-auto max-w-xl p-4 min-h-screen flex flex-col justify-center items-center">
-        
-        <!-- 5. Section d'information cliquable -->
-        <div class="text-center mb-6 space-x-4">
-            <button id="openDuaBtn" class="bg-gray-700 hover:bg-gray-600 transition duration-300 px-4 py-2 rounded-full text-sm">Invocation de l'Istikhara</button>
-            <button id="openHowToBtn" class="bg-gray-700 hover:bg-gray-600 transition duration-300 px-4 py-2 rounded-full text-sm">Comment faire la prière ?</button>
+    <div class="mesh-bg"></div>
+    <canvas id="particles" class="fixed inset-0 pointer-events-none z-0"></canvas>
+
+    <!-- Header -->
+    <header class="relative z-10 container mx-auto px-4 md:px-6 py-6 md:py-8 flex justify-between items-center">
+        <div class="flex items-center gap-3">
+            <div class="w-8 h-8 md:w-10 md:h-10 bg-white rounded-lg md:rounded-xl flex items-center justify-center rotate-45">
+                <div class="w-4 h-4 border-2 border-black -rotate-45"></div>
+            </div>
+            <span class="text-lg md:text-xl font-bold tracking-tighter uppercase">Istikhara<span class="text-teal-400">.</span>Link</span>
         </div>
+        <div class="flex items-center gap-3 md:gap-6">
+             <nav class="hidden sm:flex gap-4 md:gap-8 text-xs font-medium text-white/50">
+                <button onclick="openModal('duaModal')" class="hover:text-white transition">Invocation</button>
+                <button onclick="openModal('howToModal')" class="hover:text-white transition">Guide</button>
+            </nav>
+            <a href="https://monblog-sa-abasse.blogspot.com/" target="_blank" class="px-3 py-1.5 md:px-4 md:py-2 rounded-full border border-white/10 text-[10px] md:text-xs hover:bg-white/5 transition">Expertise IA</a>
+        </div>
+    </header>
 
-        <main class="w-full">
-            <div id="card-flipper" class="card-flipper">
-                <div id="card-inner" class="card-inner" style="min-height: 550px;">
+    <main class="relative z-10 container mx-auto px-4 md:px-6 py-6 md:py-12">
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-6 items-stretch">
+            
+            <!-- Zone d'Action Principale -->
+            <div class="md:col-span-8 bento-card p-6 md:p-12 flex flex-col justify-between min-h-[450px] md:min-h-[550px]" id="mainDisplay">
+                <div id="initialView" class="reveal-anim">
+                    <h1 class="font-display text-4xl sm:text-5xl md:text-7xl font-medium leading-[1.1] mb-8">
+                        La clarté divine, <br><span class="text-teal-400 italic">à portée d'âme.</span>
+                    </h1>
                     
-                    <!-- FACE AVANT -->
-                    <div class="card-front p-6 sm:p-10 flex flex-col justify-between">
+                    <div class="max-w-md space-y-8">
                         <div>
-                            <header class="text-center mb-6">
-                                <h1 class="font-display text-4xl md:text-5xl font-bold text-white mb-2">Istikhara</h1>
-                                <p class="text-base text-slate-400">Guidance & Réflexion Coranique</p>
-                            </header>
-
-                            <!-- 6. Fonctionnalité de journal d'intention -->
-                            <div class="mb-6">
-                                <label for="intention" class="block text-sm font-medium text-teal-400 mb-2">1. Quelle est votre intention ?</label>
-                                <textarea id="intention" rows="2" class="w-full bg-gray-800/80 rounded-lg p-3 text-white placeholder-gray-500 focus:ring-2 focus:ring-teal-500 focus:outline-none transition" placeholder="Ex: Lancer un projet, un mariage, un voyage..."></textarea>
-                            </div>
-
-                            <div class="space-y-3 text-left">
-                                <div class="p-3 bg-gray-800/50 rounded-lg flex items-center gap-3">
-                                    <span class="font-bold text-teal-400 text-lg">2.</span>
-                                    <p>Récitez 3x la prière sur le Prophète (ﷺ).</p>
-                                </div>
-                                <div class="p-3 bg-gray-800/50 rounded-lg flex items-center gap-3">
-                                    <span class="font-bold text-teal-400 text-lg">3.</span>
-                                    <p>Appuyez pour recevoir une guidance.</p>
-                                </div>
-                            </div>
+                            <p class="text-white/40 text-[10px] md:text-sm mb-4 uppercase tracking-widest">Votre intention</p>
+                            <textarea id="intention" rows="1" class="w-full bg-transparent border-b border-white/20 pb-4 text-xl md:text-2xl focus:border-teal-400 focus:outline-none transition-colors resize-none overflow-hidden" placeholder="Ex: Un nouveau projet..."></textarea>
                         </div>
-
-                        <div class="text-center mt-6">
-                            <button id="getResultBtn" class="text-white font-bold py-4 px-10 rounded-full text-lg shadow-lg">
-                                Révéler ma guidance
+                        
+                        <div class="flex flex-col sm:flex-row items-start sm:items-center gap-6">
+                            <button id="getResultBtn" class="btn-glow w-full sm:w-auto px-10 py-5 text-xs font-bold uppercase tracking-widest">
+                                Révéler la guidance
                             </button>
-                        </div>
-                    </div>
-
-                    <!-- FACE ARRIÈRE : RÉSULTAT -->
-                    <div class="card-back p-6 sm:p-10 flex flex-col justify-center items-center text-center">
-                        <div id="loader" class="loader"></div>
-                        <!-- 7. Message personnalisé pendant le chargement -->
-                        <p id="loader-text" class="text-slate-400 mt-2 hidden">Recherche d'une guidance...</p>
-                        <div id="result-content" class="hidden w-full">
-                            <!-- 8. Affichage de la catégorie du verset -->
-                            <p id="result-category" class="mb-2 text-sm uppercase tracking-widest text-teal-400"></p>
-                            <h2 id="result-title" class="font-display text-4xl font-bold mb-2"></h2>
-                            <p id="result-subtitle" class="text-xl text-slate-400 mb-6"></p>
-                            <div class="bg-gray-800/50 p-6 rounded-lg border border-slate-600">
-                                <p class="font-amiri text-3xl rtl leading-loose mb-4 text-white" id="result-arabic"></p>
-                                <p class="text-slate-300 italic mb-4" id="result-french"></p>
-                                <!-- 9. Ajout d'une brève explication (Tafsir simplifié) -->
-                                <p class="text-xs text-slate-400 border-t border-slate-700 pt-3 mt-3" id="result-tafsir"></p>
-                                <p class="text-sm text-slate-500 mt-4" id="result-verse-ref"></p>
+                            <div class="text-white/30 text-[10px] flex gap-4">
+                                <span>3x Salat Nabawi</span>
+                                <span>•</span>
+                                <span>Concentration</span>
                             </div>
-
-                            <!-- 10. Boutons d'action : Partager, Audio, Recommencer -->
-                            <div class="flex justify-center items-center gap-4 mt-6">
-                                <button id="copyBtn" class="action-btn">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z"/><path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3zM-1 8a.5.5 0 0 1 .5-.5h15a.5.5 0 0 1 0 1H-.5A.5.5 0 0 1-1 8z"/></svg>
-                                    Copier
-                                </button>
-                                <button id="audioBtn" class="action-btn">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M11.536 14.01A8.473 8.473 0 0 0 14.026 8a8.473 8.473 0 0 0-2.49-6.01l-.708.707A7.476 7.476 0 0 1 13.025 8c0 2.071-.84 3.946-2.197 5.303l.708.707z"/><path d="M10.121 12.596A6.48 6.48 0 0 0 12.025 8a6.48 6.48 0 0 0-1.904-4.596l-.707.707A5.482 5.482 0 0 1 11.025 8a5.482 5.482 0 0 1-1.61 3.89l.706.706z"/><path d="M8.707 11.182A4.486 4.486 0 0 0 10.025 8a4.486 4.486 0 0 0-1.318-3.182L8 5.525A3.489 3.489 0 0 1 9.025 8 3.49 3.49 0 0 1 8 10.475l.707.707zM6.717 3.55A.5.5 0 0 1 7 4v8a.5.5 0 0 1-.812.39L3.825 10.5H1.5A.5.5 0 0 1 1 10V6a.5.5 0 0 1 .5-.5h2.325l2.363-1.89a.5.5 0 0 1 .529-.06z"/></svg>
-                                    Écouter
-                                </button>
-                                <button id="resetBtn" class="action-btn bg-teal-600 hover:bg-teal-500 text-white">
-                                    Recommencer
-                                </button>
-                            </div>
-                            <p id="copy-feedback" class="text-xs text-green-400 mt-2 h-4"></p>
                         </div>
                     </div>
                 </div>
-            </div>
-             <!-- AVERTISSEMENT -->
-            <div class="mt-6 text-center text-xs text-slate-500 max-w-md mx-auto p-4 bg-gray-800/50 rounded-lg">
-                <p><strong class="text-amber-400">Rappel :</strong> Cet outil est une aide à la <span class="font-semibold">réflexion</span>. La véritable Istikhara est une prière spécifique incluant une invocation. Ne basez pas une décision cruciale uniquement sur ce résultat.</p>
-            </div>
-        </main>
 
-        <!-- 11. Historique de la session -->
-        <section id="history-section" class="w-full max-w-md mt-8 hidden">
-            <h3 class="text-center text-lg font-display text-slate-400 mb-4">Historique de la session</h3>
-            <div id="history-list" class="space-y-2"></div>
-        </section>
+                <!-- Vue Résultat -->
+                <div id="resultView" class="hidden h-full flex flex-col justify-center text-center max-w-2xl mx-auto py-8">
+                    <div id="loader" class="hidden">
+                        <div class="w-16 h-16 md:w-24 md:h-24 border-2 border-teal-500/20 border-t-teal-400 rounded-full animate-spin mx-auto"></div>
+                        <p class="mt-4 text-teal-400 text-[10px] tracking-widest uppercase">Consultation spirituelle...</p>
+                    </div>
 
-        <footer class="mt-8 text-center">
-             <!-- 12. Section "Pour en savoir plus" -->
-            <div class="text-xs text-slate-500 mb-2">
-                <p class="mb-1"><strong>Pour en savoir plus :</strong></p>
-                <a href="https://islamqa.info/fr/answers/11981/comment-accomplir-la-priere-de-la-consultation-salat-ul-istikhara" target="_blank" rel="noopener noreferrer" class="hover:text-teal-400">IslamQA</a> |
-                <a href="https://www.muslim.fr/priere-de-consultation-salat-istikhara/" target="_blank" rel="noopener noreferrer" class="hover:text-teal-400">Muslim.fr</a>
-            </div>
-            <p class="text-xs text-slate-500">Ce site web a été créé par Samyn-Antoy ABASSE.</p>
-        </footer>
+                    <div id="resultContent" class="hidden">
+                        <div class="flex flex-col items-center gap-4 mb-4">
+                            <div id="sentimentBadge" class="badge"></div>
+                            <span id="resCategory" class="text-white/40 text-[10px] uppercase tracking-[0.3em]"></span>
+                        </div>
+                        
+                        <h2 id="resTitle" class="font-display text-4xl md:text-6xl mb-6"></h2>
+                        
+                        <div class="my-6 md:my-10 space-y-6 md:space-y-8">
+                            <p id="resArabic" class="font-amiri text-3xl md:text-5xl leading-relaxed text-white/90" dir="rtl"></p>
+                            <p id="resFrench" class="text-lg md:text-2xl text-white/60 italic font-light"></p>
+                        </div>
 
-    </div>
-
-    <!-- 13. Modale pour l'invocation (Dua) -->
-    <div id="duaModal" class="modal">
-        <div class="modal-content">
-            <span class="close-btn" id="closeDuaBtn">&times;</span>
-            <h2 class="text-3xl font-display text-white mb-6">Invocation de l'Istikhara</h2>
-            <div class="space-y-4 text-left">
-                <p class="font-amiri text-2xl leading-relaxed text-right">اللَّهُمَّ إِنِّي أَسْتَخِيرُكَ بِعِلْمِكَ، وَأَسْتَقْدِرُكَ بِقُدْرَتِكَ، وَأَسْأَلُكَ مِنْ فَضْلِكَ الْعَظِيمِ، فَإِنَّكَ تَقْدِرُ وَلاَ أَقْدِرُ، وَتَعْلَمُ وَلاَ أَعْلَمُ، وَأَنْتَ عَلاَّمُ الْغُيُوبِ، اللَّهُمَّ إِنْ كُنْتَ تَعْلَمُ أَنَّ هَذَا الأَمْرَ - وَيُسَمِّي حَاجَتَهُ - خَيْرٌ لِي فِي دِينِي وَمَعَاشِي وَعَاقِبَةِ أَمْرِي فَاقْدُرْهُ لِي وَيَسِّرْهُ لِي ثُمَّ بَارِكْ لِي فِيهِ، وَإِنْ كُنْتَ تَعْلَمُ أَنَّ هَذَا الأَمْرَ شَرٌّ لِي فِي دِينِي وَمَعَاشِي وَعَاقِبَةِ أَمْرِي فَاصْرِفْهُ عَنِّي وَاصْرِفْنِي عَنْهُ وَاقْدُرْ لِيَ الْخَيْرَ حَيْثُ كَانَ ثُمَّ أَرْضِنِي بِهِ.</p>
-                <!-- 14. Transcription phonétique de l'invocation -->
-                <div class="p-4 bg-gray-800 rounded-lg">
-                    <h4 class="font-bold text-teal-400 mb-2">Phonétique :</h4>
-                    <p class="text-sm text-slate-300 italic">"Allâhumma innî astakhîruka bi-cilmika, wa astaqdiruka bi-qudratika, wa as'aluka min fadlika-l-cazîm. Fa-innaka taqdiru wa lâ aqdiru, wa taclamu wa lâ aclamu, wa anta callâmu-l-ghuyûb. Allâhumma in kunta taclamu anna hâdhâ-l-amra [nommer l'affaire] khayrun lî fî dînî wa macâshî wa câqibati amrî, fa-qdurhu lî, wa yassirhu lî, thumma bârik lî fîhi. Wa in kunta taclamu anna hâdhâ-l-amra sharrun lî fî dînî wa macâshî wa câqibati amrî, fa-srifhu cannî, wa-srifnî canhu, wa-qdur liya-l-khayra haythu kâna, thumma ardinî bih."</p>
+                        <div class="flex flex-wrap justify-center gap-4 mt-8">
+                            <button id="audioBtn" class="w-12 h-12 md:w-14 md:h-14 rounded-full border border-white/10 flex items-center justify-center hover:bg-white/5 transition group">
+                                <svg class="w-5 h-5 md:w-6 h-6 group-hover:text-teal-400" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                            </button>
+                            <button id="copyBtn" class="w-12 h-12 md:w-14 md:h-14 rounded-full border border-white/10 flex items-center justify-center hover:bg-white/5 transition group">
+                                <svg class="w-4 h-4 md:w-5 h-5 group-hover:text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                            </button>
+                            <button id="resetBtn" class="w-full sm:w-auto px-8 py-4 rounded-full bg-teal-500/10 text-teal-400 text-[10px] font-bold uppercase hover:bg-teal-500/20 transition">Recommencer</button>
+                        </div>
+                    </div>
                 </div>
-                <div class="p-4 bg-gray-700 rounded-lg">
-                    <h4 class="font-bold text-teal-400 mb-2">Traduction :</h4>
-                    <p class="text-sm text-slate-300">"Ô Allah ! Je Te consulte de par Ta connaissance, je quémande de Ton pouvoir de par Ta puissance, et je Te demande de par Ta grâce immense. Car Tu es certes capable et je suis incapable, Tu sais et je ne sais pas, et Tu es le Grand Connaisseur de l'invisible. Ô Allah ! Si Tu sais que cette affaire [nommer l'affaire] est un bien pour moi dans ma religion, ma vie et ma destinée, alors décrète-la pour moi, facilite-la-moi puis bénis-la pour moi. Et si Tu sais que cette affaire est un mal pour moi dans ma religion, ma vie et ma destinée, alors écarte-la de moi et écarte-moi d'elle, et décrète pour moi le bien où qu'il se trouve, puis fais que j'en sois satisfait."</p>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="md:col-span-4 flex flex-col gap-4 md:gap-6">
+                <!-- Historique -->
+                <div class="bento-card p-6 flex flex-col flex-grow">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="text-[10px] uppercase tracking-widest text-white/30 font-bold">Historique de session</h3>
+                        <div class="w-1.5 h-1.5 rounded-full bg-teal-500 shadow-[0_0_10px_rgba(0,242,234,0.5)]"></div>
+                    </div>
+                    <div id="historyList" class="space-y-3 max-h-[250px] md:max-h-[400px] overflow-y-auto pr-2">
+                        <p class="text-white/20 text-xs italic">Aucune donnée...</p>
+                    </div>
                 </div>
-                <!-- 15. Bouton pour copier l'invocation -->
-                <button id="copyDuaBtn" class="mt-4 action-btn">Copier le texte</button>
-                <p id="copy-dua-feedback" class="text-xs text-green-400 mt-2 h-4"></p>
+
+                <!-- CTA Expertise -->
+                <div class="bento-card p-6 bg-gradient-to-br from-teal-500/5 to-transparent group cursor-pointer" onclick="window.open('https://monblog-sa-abasse.blogspot.com/', '_blank')">
+                    <h3 class="text-lg font-display mb-1">Expertise IA</h3>
+                    <p class="text-[11px] text-white/40 leading-relaxed mb-4">Besoin d'un écosystème digital performant ? S.A. ABASSE transforme vos idées en solutions 2026.</p>
+                    <div class="flex items-center text-[10px] text-teal-400 font-bold uppercase tracking-widest group-hover:gap-3 transition-all gap-1">
+                        Découvrir <span>→</span>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
-    
-    <!-- 16. Modale pour le guide "Comment faire" -->
-    <div id="howToModal" class="modal">
-        <div class="modal-content">
-            <span class="close-btn" id="closeHowToBtn">&times;</span>
-            <h2 class="text-3xl font-display text-white mb-6">Comment accomplir la prière de consultation ?</h2>
-            <div class="space-y-4 text-left text-slate-300">
-                <p>La prière de l'Istikhara est une pratique prophétique (Sunnah) recommandée avant de prendre une décision importante. Elle se déroule comme suit :</p>
-                <ol class="list-decimal list-inside space-y-2 pl-4">
-                    <li>Faire ses ablutions (Wudu) de manière complète.</li>
-                    <li>Avoir une intention sincère de demander conseil à Allah.</li>
-                    <li>Prier deux unités de prière (Rak'at) surérogatoires (non obligatoires).</li>
-                    <li>Dans la première Rak'ah, réciter la Fatiha puis la sourate "Al-Kafirun" (109).</li>
-                    <li>Dans la seconde Rak'ah, réciter la Fatiha puis la sourate "Al-Ikhlas" (112).</li>
-                    <li>Après avoir terminé la prière (après le salut final), lever les mains et réciter l'invocation de l'Istikhara (disponible sur ce site).</li>
-                    <li>Au moment de dire <span class="italic text-amber-300">"hâdhâ-l-amra"</span> ("cette affaire"), mentionnez mentalement ou à voix basse votre préoccupation.</li>
-                    <li>Après l'invocation, fiez-vous à Allah. La réponse peut se manifester par un sentiment d'aisance ou de difficulté vis-à-vis de la décision, un rêve, ou la facilitation des choses dans une direction.</li>
-                </ol>
-                 <p class="pt-4 border-t border-slate-700"><strong>Important :</strong> Il n'est pas nécessaire d'attendre un rêve. Le signe le plus courant est une inclinaison du cœur et une facilitation des événements. </p>
+    </main>
+
+    <!-- Modales -->
+    <div id="duaModal" class="fixed inset-0 z-50 hidden modal-overlay items-center justify-center p-4">
+        <div class="bento-card max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 md:p-12 relative reveal-anim">
+            <button onclick="closeModal('duaModal')" class="absolute top-6 right-6 text-white/30 hover:text-white text-2xl">&times;</button>
+            <h2 class="font-display text-3xl md:text-4xl mb-6">L'Invocation Sacrée</h2>
+            <p class="font-amiri text-2xl md:text-3xl leading-relaxed text-right mb-8 text-white/90" dir="rtl">اللَّهُمَّ إِنِّي أَسْتَخِيرُكَ بِعِلْمِكَ، وَأَسْتَقْدِرُكَ بِقُدْرَتِكَ، وَأَسْأَلُكَ مِنْ فَضْلِكَ الْعَظِيمِ...</p>
+            <div class="p-6 bg-white/5 rounded-2xl italic border-l-2 border-teal-400 text-sm text-white/50 leading-relaxed">
+                "Ô Allah ! Je Te consulte de par Ta connaissance, je quémande de Ton pouvoir de par Ta puissance..."
             </div>
         </div>
     </div>
 
+    <div id="howToModal" class="fixed inset-0 z-50 hidden modal-overlay items-center justify-center p-4">
+        <div class="bento-card max-xl w-full p-6 md:p-12 relative reveal-anim">
+            <button onclick="closeModal('howToModal')" class="absolute top-6 right-6 text-white/30 hover:text-white text-2xl">&times;</button>
+            <h2 class="font-display text-3xl md:text-4xl mb-6">Le Guide</h2>
+            <ul class="space-y-4 text-xs md:text-sm text-white/50">
+                <li class="flex gap-4"><span class="text-teal-400 font-bold">01.</span> Faire ses ablutions et s'orienter.</li>
+                <li class="flex gap-4"><span class="text-teal-400 font-bold">02.</span> Prier deux Rak'ats surérogatoires.</li>
+                <li class="flex gap-4"><span class="text-teal-400 font-bold">03.</span> Réciter l'invocation après le salut final.</li>
+                <li class="flex gap-4"><span class="text-teal-400 font-bold">04.</span> Observer l'aisance ou le blocage dans l'affaire.</li>
+            </ul>
+        </div>
+    </div>
 
     <script>
-        // --- ÉLÉMENTS DU DOM ---
-        const cardFlipper = document.getElementById('card-flipper');
-        const getResultBtn = document.getElementById('getResultBtn');
-        const resetBtn = document.getElementById('resetBtn');
-        const loader = document.getElementById('loader');
-        const loaderText = document.getElementById('loader-text');
-        const resultContent = document.getElementById('result-content');
-        const resultCategory = document.getElementById('result-category');
-        const resultTitle = document.getElementById('result-title');
-        const resultSubtitle = document.getElementById('result-subtitle');
-        const resultArabic = document.getElementById('result-arabic');
-        const resultFrench = document.getElementById('result-french');
-        const resultTafsir = document.getElementById('result-tafsir');
-        const resultVerseRef = document.getElementById('result-verse-ref');
-        const copyBtn = document.getElementById('copyBtn');
-        const copyFeedback = document.getElementById('copy-feedback');
-        const audioBtn = document.getElementById('audioBtn');
-        const copyDuaBtn = document.getElementById('copyDuaBtn');
-        const copyDuaFeedback = document.getElementById('copy-dua-feedback');
-
-        // Modales
-        const duaModal = document.getElementById('duaModal');
-        const howToModal = document.getElementById('howToModal');
-        const openDuaBtn = document.getElementById('openDuaBtn');
-        const openHowToBtn = document.getElementById('openHowToBtn');
-        const closeDuaBtn = document.getElementById('closeDuaBtn');
-        const closeHowToBtn = document.getElementById('closeHowToBtn');
-
-        // Historique
-        const historySection = document.getElementById('history-section');
-        const historyList = document.getElementById('history-list');
-        let sessionHistory = [];
-        let currentAudio = null; // Pour gérer l'audio
-
-        // --- 17. BASE DE DONNÉES DE VERSETS ÉTENDUE ET CATÉGORISÉE ---
+        // --- Database avec Sentiments ---
         const verses = {
-            "Confiance & Espoir": [
-                { title: "Positif", subtitle: "Ayez pleine confiance", color: "text-sky-400", verse: { ref: "At-Talaq, 65:3", arabic: "وَمَن يَتَوَكَّلْ عَلَى اللَّهِ فَهُوَ حَسْبُهُ", french: "Et quiconque place sa confiance en Allah, Il lui suffit.", tafsir: "Ce verset souligne l'importance de la confiance totale en Allah (Tawakkul). Celui qui s'en remet à Lui trouvera en Lui le meilleur des soutiens." } },
-                { title: "Positif", subtitle: "Ne désespérez pas", color: "text-green-400", verse: { ref: "Az-Zumar, 39:53", arabic: "لَا تَقْنَطُوا مِن رَّحْمَةِ اللَّهِ", french: "Ne désespérez pas de la miséricorde d’Allah.", tafsir: "Un appel puissant à l'optimisme et à l'espoir, rappelant que la miséricorde d'Allah est immense et accessible à tous ceux qui se repentent." } },
-                { title: "Positif", subtitle: "La victoire est proche", color: "text-teal-400", verse: { ref: "An-Nasr, 110:1", arabic: "إِذَا جَاءَ نَصْرُ اللَّهِ وَالْفَتْحُ", french: "Lorsque vient le secours d'Allah ainsi que la victoire.", tafsir: "Annonce d'un succès et d'une aide divine imminente. La patience et la persévérance seront récompensées par un triomphe clair." } }
+            "Confiance": [
+                { title: "Tawakkul", sentiment: "Positif", arabic: "وَمَن يَتَوَكَّلْ عَلَى اللَّهِ فَهُوَ حَسْبُهُ", french: "Et quiconque place sa confiance en Allah, Il lui suffit.", ref: "65:3" },
+                { title: "Sérénité", sentiment: "Positif", arabic: "أَلَا بِذِكْرِ اللَّهِ تَطْمَئِنُّ الْقُلُوبُ", french: "N'est-ce pas par le souvenir d'Allah que les cœurs s'apaisent ?", ref: "13:28" }
             ],
-            "Patience & Épreuve": [
-                { title: "Neutre", subtitle: "Patience est conseillée", color: "text-amber-400", verse: { ref: "Al-Baqarah, 2:153", arabic: "اسْتَعِينُوا بِالصَّبْرِ وَالصَّلَاةِ", french: "Cherchez secours dans la patience et la prière.", tafsir: "Face aux difficultés, ce verset recommande deux piliers essentiels pour le croyant : l'endurance face à l'épreuve et le réconfort dans la prière." } },
-                { title: "Positif", subtitle: "La facilité arrive", color: "text-green-400", verse: { ref: "Ash-Sharh, 94:6", arabic: "إِنَّ مَعَ الْعُسْرِ يُسْرًا", french: "Certes, à côté de la difficulté est, une facilité.", tafsir: "Une promesse divine que chaque difficulté est accompagnée d'une issue favorable. C'est une incitation à endurer, car la délivrance est proche." } },
-                { title: "Neutre", subtitle: "Une épreuve bénéfique", color: "text-yellow-400", verse: { ref: "Al-Baqarah, 2:216", arabic: "وَعَسَىٰ أَن تَكْرَهُوا شَيْئًا وَهُوَ خَيْرٌ لَّكُمْ", french: "Il se peut que vous ayez de l'aversion pour une chose alors qu'elle vous est un bien.", tafsir: "Rappelle que la sagesse divine dépasse la compréhension humaine. Une situation qui semble négative peut en réalité cacher un grand bien." } }
+            "Attente": [
+                { title: "Facilité", sentiment: "Neutre", arabic: "إِنَّ مَعَ الْعُسْرِ يُسْرًا", french: "Certes, avec la difficulté vient la facilité.", ref: "94:6" },
+                { title: "Patience", sentiment: "Neutre", arabic: "وَاسْتَعِينُوا بِالصَّبْرِ وَالصَّلَاةِ", french: "Cherchez secours dans la patience et la prière.", ref: "2:153" }
             ],
-            "Action & Décision": [
-                { title: "Positif", subtitle: "Agissez avec détermination", color: "text-blue-400", verse: { ref: "Al-Anfal, 8:60", arabic: "وَأَعِدُّوا لَهُم مَّا اسْتَطَعْتُم مِّن قُوَّةٍ", french: "Et préparez [pour lutter] contre eux tout ce que vous pouvez comme force.", tafsir: "Un appel à l'action, à la préparation et à l'utilisation de tous les moyens disponibles pour atteindre un objectif juste." } },
-                { title: "Positif", subtitle: "Favorable, si reconnaissant", color: "text-teal-400", verse: { ref: "Ibrahim, 14:7", arabic: "لَئِن شَكَرْتُمْ لَأَزِيدَنَّكُمْ", french: "Si vous êtes reconnaissants, J'augmenterai [Mes bienfaits] pour vous.", tafsir: "La gratitude (Shukr) est la clé de l'abondance. Reconnaître les bienfaits d'Allah ouvre la porte à encore plus de faveurs." } },
-                { title: "Neutre", subtitle: "Consultez les autres", color: "text-purple-400", verse: { ref: "Ash-Shura, 42:38", arabic: "وَأَمْرُهُمْ شُورَىٰ بَيْنَهُمْ", french: "et leurs affaires se règlent par consultation entre eux.", tafsir: "Souligne l'importance de la consultation (Shura) avant de prendre des décisions importantes. L'avis collectif est une source de sagesse." } }
-            ],
-            "Mise en Garde & Prudence": [
-                { title: "Négatif", subtitle: "Soyez sur vos gardes", color: "text-red-400", verse: { ref: "Al-Imran, 3:118", arabic: "يَا أَيُّهَا الَّذِينَ آمَنُوا لَا تَتَخِذُوا بِطَانَةً مِّن دُونِكُمْ", french: "Ô les croyants, ne prenez pas de confidents en dehors de vous-mêmes.", tafsir: "Une mise en garde contre la confiance aveugle. Il est conseillé de faire preuve de prudence et de ne pas dévoiler ses secrets à n'importe qui." } },
-                { title: "Négatif", subtitle: "N'agissez pas avec ignorance", color: "text-orange-400", verse: { ref: "Al-Hujurat, 49:6", arabic: "فَتَبَيَّنُوا أَن تُصِيبُوا قَوْمًا بِجَهَالَةٍ", french: "vérifiez [l'information] de peur que par ignorance vous ne portiez atteinte à des gens.", tafsir: "Insiste sur la nécessité de vérifier les informations avant d'agir. La précipitation basée sur des rumeurs peut causer de grands torts." } },
-                { title: "Négatif", subtitle: "La précipitation est déconseillée", color: "text-red-500", verse: { ref: "Al-Isra, 17:11", arabic: "وَكَانَ الْإِنسَانُ عَجُولًا", french: "Et l'homme est très prompt à l'empressement.", tafsir: "Ce verset met en lumière la nature hâtive de l'homme, qui peut le pousser à prendre des décisions précipitées. La patience est une vertu à cultiver." } }
+            "Avertissement": [
+                { title: "Vigilance", sentiment: "Négatif", arabic: "فَتَبَيَّنُوا أَن تُصِيبُوا قَوْمًا بِجَهَالَةٍ", french: "Vérifiez l'information avant d'agir avec ignorance.", ref: "49:6" },
+                { title: "Sagesse", sentiment: "Négatif", arabic: "وَعَسَىٰ أَن تَكْرَهُوا شَيْئًا وَهُوَ خَيْرٌ لَّكُمْ", french: "Il se peut que vous ayez de l'aversion pour une chose qui est un bien.", ref: "2:216" }
             ]
         };
 
-        // --- FONCTIONS ---
+        const getResultBtn = document.getElementById('getResultBtn');
+        const initialView = document.getElementById('initialView');
+        const resultView = document.getElementById('resultView');
+        const loader = document.getElementById('loader');
+        const resultContent = document.getElementById('resultContent');
+        const historyList = document.getElementById('historyList');
+        const sentimentBadge = document.getElementById('sentimentBadge');
+        let currentAudio = null;
 
-        // Fonction pour choisir un verset aléatoire
-        const getRandomVerse = () => {
-            const categories = Object.keys(verses);
-            const randomCategory = categories[Math.floor(Math.random() * categories.length)];
-            const versesInCategory = verses[randomCategory];
-            const randomVerse = versesInCategory[Math.floor(Math.random() * versesInCategory.length)];
-            return { ...randomVerse, category: randomCategory };
-        };
-
-        // Fonction pour mettre à jour la carte avec le résultat
-        const displayResult = (result) => {
-            resultCategory.textContent = result.category;
-            resultTitle.textContent = result.title;
-            resultTitle.className = `font-display text-4xl font-bold mb-2 ${result.color}`;
-            resultSubtitle.textContent = result.subtitle;
-            resultArabic.textContent = result.verse.arabic;
-            resultFrench.textContent = `"${result.verse.french}"`;
-            resultTafsir.textContent = result.verse.tafsir;
-            resultVerseRef.textContent = `(Sourate ${result.verse.ref})`;
-            
-            // Stocker la référence pour les boutons copier/audio
-            copyBtn.dataset.text = `Istikhara - ${result.category} : "${result.verse.french}" (Sourate ${result.verse.ref})`;
-            
-            // Correction du bug : la mauvaise partie de la référence était sélectionnée pour l'audio.
-            const [surah, ayah] = result.verse.ref.split(', ')[1].split(':'); 
-            audioBtn.dataset.audioSrc = `https://everyayah.com/data/Alafasy_128kbps/${surah.padStart(3, '0')}${ayah.padStart(3, '0')}.mp3`;
-        };
-
-        // 18. Implémentation de la mise à jour de l'historique de session
-        const updateHistory = (result) => {
-            sessionHistory.unshift(result); // Ajoute au début
-            historySection.classList.remove('hidden');
-            historyList.innerHTML = ''; // Efface la liste
-            sessionHistory.forEach(item => {
-                const historyItem = document.createElement('div');
-                historyItem.className = 'bg-gray-800/50 p-2 rounded-lg text-sm flex justify-between items-center';
-                historyItem.innerHTML = `
-                    <div>
-                        <span class="font-bold ${item.color}">${item.title}</span>
-                        <span class="text-slate-400 text-xs"> - ${item.verse.ref}</span>
-                    </div>
-                    <span class="text-xs text-slate-500">${item.category}</span>
-                `;
-                historyList.appendChild(historyItem);
-            });
-        };
-
-        // --- GESTIONNAIRES D'ÉVÉNEMENTS ---
-
-        getResultBtn.addEventListener('click', () => {
-            cardFlipper.classList.add('is-flipped');
+        // --- Core Logic ---
+        getResultBtn.onclick = () => {
+            initialView.classList.add('hidden');
+            resultView.classList.remove('hidden');
+            loader.classList.remove('hidden');
             resultContent.classList.add('hidden');
-            loader.style.display = 'block';
-            loaderText.classList.remove('hidden');
 
             setTimeout(() => {
-                const result = getRandomVerse();
-                displayResult(result);
-                updateHistory(result);
+                const cats = Object.keys(verses);
+                const cat = cats[Math.floor(Math.random() * cats.length)];
+                const item = verses[cat][Math.floor(Math.random() * verses[cat].length)];
                 
-                loader.style.display = 'none';
-                loaderText.classList.add('hidden');
-                resultContent.classList.remove('hidden');
-            }, 1800); // Temps de "réflexion" légèrement augmenté
-        });
-
-        resetBtn.addEventListener('click', () => {
-            cardFlipper.classList.remove('is-flipped');
-            if (currentAudio) {
-                currentAudio.pause();
-                currentAudio = null;
-                audioBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M11.536 14.01A8.473 8.473 0 0 0 14.026 8a8.473 8.473 0 0 0-2.49-6.01l-.708.707A7.476 7.476 0 0 1 13.025 8c0 2.071-.84 3.946-2.197 5.303l.708.707z"/><path d="M10.121 12.596A6.48 6.48 0 0 0 12.025 8a6.48 6.48 0 0 0-1.904-4.596l-.707.707A5.482 5.482 0 0 1 11.025 8a5.482 5.482 0 0 1-1.61 3.89l.706.706z"/><path d="M8.707 11.182A4.486 4.486 0 0 0 10.025 8a4.486 4.486 0 0 0-1.318-3.182L8 5.525A3.489 3.489 0 0 1 9.025 8 3.49 3.49 0 0 1 8 10.475l.707.707zM6.717 3.55A.5.5 0 0 1 7 4v8a.5.5 0 0 1-.812.39L3.825 10.5H1.5A.5.5 0 0 1 1 10V6a.5.5 0 0 1 .5-.5h2.325l2.363-1.89a.5.5 0 0 1 .529-.06z"/></svg> Écouter';
-            }
-        });
-
-        // 19. Fonctionnalité de copie et audio améliorée
-        copyBtn.addEventListener('click', () => {
-            navigator.clipboard.writeText(copyBtn.dataset.text).then(() => {
-                copyFeedback.textContent = 'Copié dans le presse-papiers !';
-                setTimeout(() => copyFeedback.textContent = '', 2000);
-            });
-        });
-
-        audioBtn.addEventListener('click', () => {
-            const audioSrc = audioBtn.dataset.audioSrc;
-            if (currentAudio && !currentAudio.paused) {
-                currentAudio.pause();
-                currentAudio = null;
-                audioBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M11.536 14.01A8.473 8.473 0 0 0 14.026 8a8.473 8.473 0 0 0-2.49-6.01l-.708.707A7.476 7.476 0 0 1 13.025 8c0 2.071-.84 3.946-2.197 5.303l.708.707z"/><path d="M10.121 12.596A6.48 6.48 0 0 0 12.025 8a6.48 6.48 0 0 0-1.904-4.596l-.707.707A5.482 5.482 0 0 1 11.025 8a5.482 5.482 0 0 1-1.61 3.89l.706.706z"/><path d="M8.707 11.182A4.486 4.486 0 0 0 10.025 8a4.486 4.486 0 0 0-1.318-3.182L8 5.525A3.489 3.489 0 0 1 9.025 8 3.49 3.49 0 0 1 8 10.475l.707.707zM6.717 3.55A.5.5 0 0 1 7 4v8a.5.5 0 0 1-.812.39L3.825 10.5H1.5A.5.5 0 0 1 1 10V6a.5.5 0 0 1 .5-.5h2.325l2.363-1.89a.5.5 0 0 1 .529-.06z"/></svg> Écouter';
-            } else {
-                currentAudio = new Audio(audioSrc);
-                currentAudio.play();
-                audioBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M5.5 3.5A1.5 1.5 0 0 1 7 5v6a1.5 1.5 0 0 1-3 0V5a1.5 1.5 0 0 1 1.5-1.5zm5 0A1.5 1.5 0 0 1 12 5v6a1.5 1.5 0 0 1-3 0V5a1.5 1.5 0 0 1 1.5-1.5z"/></svg> Pause';
-                currentAudio.onended = () => {
-                    audioBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M11.536 14.01A8.473 8.473 0 0 0 14.026 8a8.473 8.473 0 0 0-2.49-6.01l-.708.707A7.476 7.476 0 0 1 13.025 8c0 2.071-.84 3.946-2.197 5.303l.708.707z"/><path d="M10.121 12.596A6.48 6.48 0 0 0 12.025 8a6.48 6.48 0 0 0-1.904-4.596l-.707.707A5.482 5.482 0 0 1 11.025 8a5.482 5.482 0 0 1-1.61 3.89l.706.706z"/><path d="M8.707 11.182A4.486 4.486 0 0 0 10.025 8a4.486 4.486 0 0 0-1.318-3.182L8 5.525A3.489 3.489 0 0 1 9.025 8 3.49 3.49 0 0 1 8 10.475l.707.707zM6.717 3.55A.5.5 0 0 1 7 4v8a.5.5 0 0 1-.812.39L3.825 10.5H1.5A.5.5 0 0 1 1 10V6a.5.5 0 0 1 .5-.5h2.325l2.363-1.89a.5.5 0 0 1 .529-.06z"/></svg> Écouter';
-                };
-            }
-        });
-
-        // Logique pour les modales
-        openDuaBtn.onclick = () => duaModal.style.display = "block";
-        openHowToBtn.onclick = () => howToModal.style.display = "block";
-        closeDuaBtn.onclick = () => duaModal.style.display = "none";
-        closeHowToBtn.onclick = () => howToModal.style.display = "none";
-        window.onclick = (event) => {
-            if (event.target == duaModal) duaModal.style.display = "none";
-            if (event.target == howToModal) howToModal.style.display = "none";
+                displayResult(cat, item);
+                addToHistory(cat, item);
+            }, 2000);
         };
 
-        copyDuaBtn.addEventListener('click', () => {
-            const duaText = duaModal.querySelector('.space-y-4').innerText;
-            navigator.clipboard.writeText(duaText).then(() => {
-                copyDuaFeedback.textContent = 'Invocation copiée !';
-                setTimeout(() => copyDuaFeedback.textContent = '', 2000);
+        function displayResult(cat, item) {
+            loader.classList.add('hidden');
+            resultContent.classList.remove('hidden');
+            resultContent.classList.add('reveal-anim');
+
+            // Badge Setup
+            sentimentBadge.className = `badge badge-${item.sentiment.toLowerCase()}`;
+            sentimentBadge.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-current"></span> ${item.sentiment}`;
+
+            document.getElementById('resCategory').innerText = cat;
+            document.getElementById('resTitle').innerText = item.title;
+            document.getElementById('resArabic').innerText = item.arabic;
+            document.getElementById('resFrench').innerText = `"${item.french}"`;
+            
+            const [surah, ayah] = item.ref.split(':');
+            const audioSrc = `https://everyayah.com/data/Alafasy_128kbps/${surah.padStart(3, '0')}${ayah.padStart(3, '0')}.mp3`;
+            document.getElementById('audioBtn').onclick = () => {
+                if(currentAudio) currentAudio.pause();
+                currentAudio = new Audio(audioSrc);
+                currentAudio.play();
+            };
+            
+            document.getElementById('copyBtn').onclick = () => {
+                navigator.clipboard.writeText(`${item.title} (${item.sentiment}): ${item.french} (Coran ${item.ref})`);
+            };
+        }
+
+        function addToHistory(cat, item) {
+            const entry = document.createElement('div');
+            entry.className = 'p-4 bg-white/5 rounded-2xl border border-white/5 flex justify-between items-center reveal-anim';
+            const timeString = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            
+            entry.innerHTML = `
+                <div>
+                    <div class="flex items-center gap-2 mb-1">
+                        <span class="text-[9px] px-2 py-0.5 rounded-full bg-white/10 uppercase tracking-tighter text-white/50">${cat}</span>
+                        <span class="text-[9px] font-bold ${item.sentiment === 'Positif' ? 'text-green-400' : item.sentiment === 'Négatif' ? 'text-red-400' : 'text-amber-400'}">${item.sentiment}</span>
+                    </div>
+                    <p class="text-xs font-medium">${item.title}</p>
+                </div>
+                <span class="text-[9px] text-white/10">${timeString}</span>
+            `;
+            if (historyList.children[0]?.tagName === 'P') historyList.innerHTML = '';
+            historyList.prepend(entry);
+        }
+
+        document.getElementById('resetBtn').onclick = () => {
+            resultView.classList.add('hidden');
+            initialView.classList.remove('hidden');
+            initialView.classList.add('reveal-anim');
+            if(currentAudio) currentAudio.pause();
+        };
+
+        function openModal(id) { document.getElementById(id).style.display = 'flex'; }
+        function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+
+        // Particles
+        const canvas = document.getElementById('particles');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+
+        function initParticles() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            particles = Array.from({length: 40}, () => ({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                size: Math.random() * 1.5,
+                speed: Math.random() * 0.3 + 0.1,
+                opacity: Math.random() * 0.4
+            }));
+        }
+
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => {
+                ctx.fillStyle = `rgba(255, 255, 255, ${p.opacity})`;
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                ctx.fill();
+                p.y -= p.speed;
+                if(p.y < 0) p.y = canvas.height;
             });
-        });
+            requestAnimationFrame(animateParticles);
+        }
 
+        window.onload = () => { initParticles(); animateParticles(); };
+        window.onresize = initParticles;
     </script>
-
 </body>
 </html>
-
